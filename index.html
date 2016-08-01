@@ -3,12 +3,12 @@
     <head>
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="underscore.js"></script>
-        <script type="text/javascript" src="todo.js"></script>
-        <link rel="stylesheet" type="text/css" href="todo.css">
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/base/jquery-ui.css">
+        <script type="text/javascript" src="todo.js"></script>
+        <link rel="stylesheet" type="text/css" href="todo.css">
         <script type="text/javascript">
             function startTime() {
                 var today = new Date();
@@ -16,7 +16,7 @@
                 var minutes = today.getMinutes();
                 var ampm = hours>= 12 ? 'PM' : 'AM';
                 minutes = checkTime(minutes);
-                document.getElementById('addtime').innerHTML =(hours + ":" + minutes + " " + ampm);
+                document.getElementById('dialogAddTime').innerHTML =(hours + ":" + minutes + " " + ampm);
                 var t = setTimeout(startTime, 500);
             }
             
@@ -27,67 +27,52 @@
         </script>
     </head>
     <body onload="startTime()">
-        <div style="color:red;width:550px; padding: auto;border-style:solid;border-color:red; " id="main" title="ADD TASK">
-            <table>
-                <tr>
-                    <td>TITLE:
-                        <input type="text" name="title" placeholder="title..." id="title" style="text-transform:uppercase"  >
-                    </td>
-                </tr>
-                <tr>
-                    <td style="color:green;width:1px; height:1px; border-style:dotted;font:right;" >DATE:
-                        <input type="text" id="date"> 
-                    </td>
-                    <td style="color:blue;width:100px; height:1px; border-style:dotted;font left;" id="addtime" >
-                    </td>
-                </tr>
-                <tr>
-                    <td style="color:pink;width:50px;border-style:dotted;font:right;">
-                        <input type="number" min="0" max="23" size="0.5" placeholder="H" id="addStartHours">
-                        <input type="number" min="0" max="59" size="0.5" placeholder="M" id="addStartMin" >
-                        <input type="text" maxlength="2" size="4"  id="ampm" >
-                    </td>
-                    <td>
-                        <button id="alarm" >Alarm</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>DESCRIPTION:
-                        <textarea rows="" cols="" name="comment" placeholder="Enter text here..." id="description"></textarea>
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <br>
-        <div style="border: solid 1px black; width:780px;">
-            <button id="add">ADD</button>
-            <br>
-            <div class="bottom">
-                <div class="box1" >
-                    <tr >
-                        <td >
-                            <h1>NONE</h1>
-                            <hr>
-                        </td>
-                    </tr>
+        <div class="dialogBox" id="dialogBox" title="ADD TASK">
+            <div class="title">
+                <span>
+                    <th>TITLE:</th>
+                </span>
+                <span>
+                    <input type="text" maxlength="12" name="title" placeholder="title..." id="dialogTitle">
+                </span>
+            </div>
+            <div>
+                <div class="td1" >
+                    <span>DATE:</span>
+                    <div class="date-input">
+                        <input type="text" id="dialogDate" size="8"> 
+                    </div>
                 </div>
-                <div class="box2">
-                    <tr>
-                        <td>
-                            <h1>IN PROGRESS</h1>
-                            <hr>
-                        </td>
-                    </tr>
+                <div class="td2" id="dialogAddTime" ></div>
+                <div class="td3">
+                    <input type="number" min="0" max="23" size="0.5" placeholder="HH" id="dialogStartHour">
+                    <input type="number" min="0" max="59" size="0.5" placeholder="MM" id="dialogStartMin" >
+                    <input type="text" maxlength="2" size="4"  id="dialogAmPm" >
+                    <button id="alarm" >Alarm</button>
                 </div>
-                <div class="box3">
-                    <tr>
-                        <td>
-                            <h1>COMPLETED</h1>
-                            <hr>
-                        </td>
-                    </tr>
+                <div>DESCRIPTION:</div>
+                <div>
+                    <textarea rows="" cols="" name="comment" placeholder="Please enter text here." id="dialogDescription"></textarea>
                 </div>
             </div>
         </div>
+        <br>
+            <button id="addTask">ADD</button>
+            <br>
+            <div class="bottom">
+                <div class="box1">
+                    <th>NONE</th>
+                    <hr>
+                </div>
+                <div class="box2">
+                    <th>IN PROGRESS</th>
+                    <hr>
+                </div>
+                <div class="box3">
+                    <th>COMPLETED</th>
+                    <hr>
+                </div>
+            </div>
+        
     </body>
 </html>

@@ -1,183 +1,103 @@
 $(document).ready(function(){
-    var starthour;
-    var startmin;
-    var date;
-    var editHours;
-    var editminute;
-    var ampm;
-    var editDate;
-    var editTitle;
-    var editDescrip;
-    var hours;
-    var minutes;
-    var items = [];
-    var latestItems=[];
-    var addData={date:"",title:"",descrip:"",hour:"",min:"",AMPM:""};
-    var latestData={Hour:"",Min:"",Col:":",AMPM:"", Date:"",Title:"",Descrip:""};
-    var today=new Date();
-    startTime();
-    $("#main").hide();
-    $("#date").datepicker({
-        defaultDate: new Date(),
+    var length;
+    var data;
+    var taskListData = [];
+    var taskItem=[];
+    setTime();
+    $("#dialogBox").hide();
+    $("#dialogDate").datepicker({
         yearRange: "2016:2020",
         minDate: '0',
         changeMonth: true,
         changeYear: true,
     });
-    $("#add").click(function() {
-        $("#date").val("");
-        $("#title").val("");
-        $("#description").val("");
-        $("#main").dialog({
+    $("#dialogDate").datepicker().datepicker("setDate", new Date());
+    $("#addTask").click(function() {
+        newDialogBox();
+    });
+
+    /*var onClickEditTask = function(id){
+        console.log('In onClickEditTask:: ',id); //task1/ task2
+        var taskIndex = id - 1;
+        var taskItem  = taskListData[taskIndex];
+        openEditTaskDialog(taskItem);
+    }*/
+
+    function newDialogBox(){
+        $("#dialogTitle").val('');
+        $("#dialogDescription").val('');
+        $("#dialogBox").dialog({
             buttons: {
                 SAVE: function() {
-                    if(($('#title').val() == '')||($('#description').val()== '')){
-                        items.push(addData);
-                        alert("Please enter Task Title and Description.");
+                    if(($('#dialogTitle').val() == '')||($('#dialogDescription').val()== '')){
+                        alert("Please enter task Title and Description.");
                     }else{
-                        date=$("#date").val();
-                        var title=$("#title").val();
-                        var descrip=$("#description").val();
-                        starthour=$("#addStartHours").val();
-                        startmin=$("#addStartMin").val();
-                        console.log(startmin)
-                        var ampm=$("#ampm").val();
-                        addData.date = date;
-                        addData.title = title;
-                        addData.descrip = descrip;
-                        addData.hour=starthour;
-                        addData.min=startmin;
-                        addData.AMPM=ampm;
-                        if(today.getMinutes() == startmin){
+                        /*if(today.getMinutes() == startmin){
                             alert("alarm ringing");
-                        }
-                        console.log(addData);
-                        items.push(addData);
+                        }*/
+                        taskItem.push(getDataFromAddTaskDialog());
                         $(this).dialog("close");
-                        loadDataInDiv(items);
+                        loadDataInDiv(getDataFromAddTaskDialog(), taskItem.length);
                     }
                 }
             }
         });
-    });
-
-    var loadDataInDiv = function(items){
-        var div = '';
-        $.each(items, function(key, value){
-            div='<body>'
-                    +'<table>'
-                        +'<tr>'
-                            +'<td style="color:red;width:100px;height:auto; padding:auto;border-style:solid;border-color:red;" title="EDIT TASK" id="latesttask">'
-                                +'<input type="text" id="editTitle"  style="text-transform:uppercase" placeholder="Title" value='+value.title+'>'
-                                +'<br>'
-                                +'<input type="number" min="0" max="23" size="0.5" placeholder="H" id="editHours" value='+value.hour+'>'
-                                +'<input type="number" min="0" max="59" size="0.5" placeholder="M" id="editminute" value='+value.min+'>'
-                                +'<button id="alarm1">AON</button>'
-                                +'<br>'
-                                +'<input type="text"  id="editDate" placeholder="Date" value='+value.date+'>'
-                                +'<br>'
-                                +'<textarea rows="" cols="" placeholder="Description" id="editDescrip">'+value.descrip+'</textarea>'
-                            +'</td>';
-        });
-        $(".box1").append(div);
-        $("#latesttask").draggable();
-        $("#latesttask").click(function(){
-            $(this).dialog({
-                buttons:{
-                    SAVE:function(){
-                        latestItems.push(latestData);
-                        editHours=document.getElementById('editHours').value;
-                        editMinute=document.getElementById('editminute').value;
-                        editDate=document.getElementById('editDate').value;
-                        editTitle=document.getElementById('editTitle').value;
-                        editDescrip=document.getElementById('editDescrip').value;
-                        ampm=document.getElementById('ampm').value;
-                        latestData.Hour=editHours;
-                        latestData.Min=editMinute;
-                        latestData.AMPM=ampm;
-                        latestData.Date=editDate;
-                        latestData.Title=editTitle;
-                        latestData.Descrip=editDescrip;
-                        if(today.getMinutes() == editMinute){
-                            alert("alarm ringing");
-                        }
-                        console.log(latestData);
-                        $(this).dialog("close");
-                        loadNewInDiv(latestItems);
-                    }
-                }
-            });
-        });
     }
 
-    var loadNewInDiv=function(latestItems) {
-        var newDiv='';
-        $.each(items, function(key, value){
-            newDiv='<body>'
-                        +'<table>'
-                            +'<tr>'
-                                +'<td style="color:red;width:100px;height:auto;padding:auto;border-style:solid;border-color:red;" title="Edit" id="edittask">'
-                                    +'<span style="color:black;text-transform:uppercase; " id="editTitle"  placeholder="Title">'+latestData.Title+'</span>'
-                                    +'<br>'
-                                    +'<span id="editHours">'+latestData.Hour+latestData.Col+'</span>'
-                                    +'<span id="editminute">'+latestData.Min+'</span>'
-                                    +'<span id="ampm1" >'+latestData.AMPM+'</span>'
-                                    +'<br>'
-                                    +'<span id="editDate">'+latestData.Date+'</span>'
-                                    +'<br>'
-                                    +'<span id="editDescrip">'+latestData.Descrip+'</span>'
-                                +'</td>';
+    function getDataFromAddTaskDialog(){
+        return data={
+            title: toTitleCase($("#dialogTitle").val()),
+            date: $("#dialogDate").val(),
+            hour: $("#dialogStartHour").val(),
+            min: $("#dialogStartMin").val(),
+            AMPM: $("#dialogAmPm").val(),
+            descrip: $("#dialogDescription").val(),
+        }
+    }
+
+    var loadDataInDiv = function(taskItem, length){
+        var id = 'task' + length;
+        var newHtml='<div class="span1" id="'+ id +'"><div><span>TITLE:</span><span>'+data.title+'</span><span><button class="button">edit</button></span></div><div><span>TIME:</span><span>'+data.hour+':'+data.min+data.AMPM+'</span></div><div></div><div><span>DATE:</span><span>'+data.date+'</span></div><div><span>DESCRIPTION:</span><span>'+data.descrip+'</span></div></div></div><br>';  
+        $(".box1").append(newHtml);
+        $("#"+id).draggable({
+            revert : 'invalid'
         });
-        $(".box1").append(newDiv);
-        $("#edittask").draggable();
-        //$('#edittask').html($('#edittask').data('old-state'));
-        //$("#edittask").html(latesttask);
-        /*var dataSave=latestItems[0];
-        console.log(dataSave);
-        $("#edittask").data(dataSave);*/
-        //console.log(latestItems[0]);
-    }
-
-    function startTime() {
-        hours = today.getHours();
-        minutes = today.getMinutes();
-        ampm = hours>= 12 ? 'PM' : 'AM';
-        var timeHour=$("#addStartHours").val(hours);
-        var timeMin=$("#addStartMin").val(minutes);
-        var AMPM=$("#ampm").val(ampm);
-    }
-
-    /*$("#alarm").click(function(){
-        alarm();
-    });
-
-    function alarm() {
-        (today.getMinutes()==startmin)
-            alert("alarm ringing");
-            console.log("hiii");
-        // }else if(today.getMinutes()==editminute){
-        //     alert("alarm ringing");
-        //     console.log("hello");
-        // }else{
-        //      console.log("hifi");
-        // }
-    }    
-*/
-    /*function alarm(){
-        currentTime={H:today.getHours(),M:today.getMinutes(),ampm:addData.AMPM};
-        if((today.getHours()==editHours)&&(today.getMinutes()==editMinute)){
-                console.log("hiii");
-                alert("time is over");
-        }else{
-                console.log("hello");
+        console.log(id)
+        $(".box2").droppable({
+            drop: function (event,ui) {
+                accept:'.box1',
+                console.log(ui);
+                $(ui.draggable).css('top','0px');
             }
-    }*/
-    // function alarm() {
-    //     var todayMin = today.getMinutes();
-    //     var newMin = parseInt(editminute);
-    //     console.log(todayMin,newMin);
-    //     if (todayMin == (newMin)) {
-    //         alert("alarm ringing");
-    //     }
-    // }
+        });
+        $(".button").click(function(){
+            $(".button").hide();
+            $("#"+id).hide();
+            $("#dialogBox").dialog({
+                buttons: {
+                    SAVE: function() {
+                        $(this).dialog("close");
+                        loadDataInDiv(getDataFromAddTaskDialog(), taskItem.length);
+                        $(".button").hide();
+                    }
+                }    
+            });  
+        });
+    }
+
+    function setTime() {
+        var today=new Date();
+        var hours = today.getHours();
+        var minutes = today.getMinutes();
+        var ampm = (hours>= 12) ? 'PM' : 'AM';
+        var timeHour = $("#dialogStartHour").val(hours);
+        var timeMin = $("#dialogStartMin").val(minutes);
+        var AMPM = $("#dialogAmPm").val(ampm);
+    }
+
+    function toTitleCase(str) {
+        return str.replace(/(?:^|\s)\w/g, function(match) {
+            return match.toUpperCase();
+        });
+    } 
 });
